@@ -9,7 +9,8 @@
   "test:prs": "tsx src/tools/testListPRs.ts",
   "test:pr-details": "tsx src/tools/testPRDetails.ts",
   "test:ci": "tsx src/tools/testCIStatus.ts",
-  "test:create-issue": "tsx src/tools/testCreateIssue.ts"
+  "test:create-issue": "tsx src/tools/testCreateIssue.ts",
+  "test:pr-comment": "tsx src/tools/testOpenPRComment.ts"
 },
   "keywords": [],
   "author": "",
