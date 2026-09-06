@@ -7,6 +7,7 @@ import { getPRDetails } from "./tools/getPRDetails.js";
 import { getCIStatus } from "./tools/getCIStatus.js";
 import { createIssue } from "./tools/createIssue.js";
 import { requireConfirmation } from "./safety/writeConfirmation.js";
+import { openPRComment } from "./tools/openPRComment.js";
 
 const server = new McpServer({
   name: "github-mcp-server",
@@ -231,6 +232,97 @@ Title: ${title}`;
           {
             type: "text",
             text: `Failed to create an issue in ${owner}/${repo}.`,
+          },
+        ],
+        isError: true,
+      };
+    }
+  }
+);
+
+server.registerTool(
+  "open_pr_comment",
+  {
+    description:
+      "Add a comment to a GitHub pull request. This is a write action and requires explicit confirmation before execution.",
+
+    inputSchema: {
+      owner: z
+        .string()
+        .describe(
+          "The GitHub username or organization that owns the repository"
+        ),
+
+      repo: z
+        .string()
+        .describe("The name of the GitHub repository"),
+
+      prNumber: z
+        .number()
+        .int()
+        .positive()
+        .describe("The pull request number"),
+
+      comment: z
+        .string()
+        .min(1)
+        .describe("The comment to add to the pull request"),
+
+      confirm: z
+        .boolean()
+        .default(false)
+        .describe(
+          "Set to true only after the user has explicitly confirmed the comment should be posted"
+        ),
+    },
+  },
+
+  async ({ owner, repo, prNumber, comment, confirm }) => {
+    try {
+      const actionDescription = `Action: Add Pull Request Comment
+Repository: ${owner}/${repo}
+Pull Request: #${prNumber}
+Comment: ${comment}`;
+
+      const confirmation = requireConfirmation(
+        confirm,
+        actionDescription
+      );
+
+      if (!confirmation.confirmed) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: confirmation.message!,
+            },
+          ],
+        };
+      }
+
+      const result = await openPRComment(
+        owner,
+        repo,
+        prNumber,
+        comment
+      );
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: result,
+          },
+        ],
+      };
+    } catch (error) {
+      console.error("open_pr_comment tool failed:", error);
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Failed to add a comment to PR #${prNumber} in ${owner}/${repo}.`,
           },
         ],
         isError: true,
