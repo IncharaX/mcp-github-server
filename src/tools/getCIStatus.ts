@@ -1,4 +1,5 @@
 import { octokit } from "../github/client.js";
+import { getGitHubErrorMessage } from "../errors/githubErrorHandler.js";
 
 export async function getCIStatus(
   owner: string,
@@ -32,10 +33,8 @@ export async function getCIStatus(
 
     return JSON.stringify(formattedStatus, null, 2);
   } catch (error) {
-    console.error("Failed to fetch CI status:", error);
+  const message = getGitHubErrorMessage(error);
 
-    throw new Error(
-      `Unable to fetch CI status for branch "${branch}" in ${owner}/${repo}.`
-    );
-  }
+  throw new Error(message);
+}
 }

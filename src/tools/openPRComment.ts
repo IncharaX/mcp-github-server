@@ -1,4 +1,5 @@
 import { octokit } from "../github/client.js";
+import { getGitHubErrorMessage } from "../errors/githubErrorHandler.js";
 
 export async function openPRComment(
   owner: string,
@@ -24,10 +25,8 @@ export async function openPRComment(
 
     return JSON.stringify(formattedComment, null, 2);
   } catch (error) {
-    console.error("Failed to add PR comment:", error);
+  const message = getGitHubErrorMessage(error);
 
-    throw new Error(
-      `Unable to add a comment to PR #${prNumber} in ${owner}/${repo}.`
-    );
-  }
+  throw new Error(message);
+}
 }

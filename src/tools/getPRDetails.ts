@@ -1,9 +1,10 @@
 import { octokit } from "../github/client.js";
+import { getGitHubErrorMessage } from "../errors/githubErrorHandler.js";
 
 export async function getPRDetails(
   owner: string,
   repo: string,
-  prNumber: number
+  prNumber: number,
 ) {
   try {
     // Fetch the main Pull Request details
@@ -14,12 +15,11 @@ export async function getPRDetails(
     });
 
     // Fetch comments on the Pull Request
-    const { data: comments } =
-      await octokit.rest.issues.listComments({
-        owner,
-        repo,
-        issue_number: prNumber,
-      });
+    const { data: comments } = await octokit.rest.issues.listComments({
+      owner,
+      repo,
+      issue_number: prNumber,
+    });
 
     const formattedPR = {
       number: pr.number,
@@ -42,10 +42,8 @@ export async function getPRDetails(
 
     return JSON.stringify(formattedPR, null, 2);
   } catch (error) {
-    console.error("Failed to fetch PR details:", error);
+    const message = getGitHubErrorMessage(error);
 
-    throw new Error(
-      `Unable to fetch details for PR #${prNumber} in ${owner}/${repo}.`
-    );
+    throw new Error(message);
   }
 }

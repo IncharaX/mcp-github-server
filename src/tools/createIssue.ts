@@ -1,4 +1,5 @@
 import { octokit } from "../github/client.js";
+import { getGitHubErrorMessage } from "../errors/githubErrorHandler.js";
 
 export async function createIssue(
   owner: string,
@@ -24,10 +25,8 @@ export async function createIssue(
 
     return JSON.stringify(formattedIssue, null, 2);
   } catch (error) {
-    console.error("Failed to create issue:", error);
+  const message = getGitHubErrorMessage(error);
 
-    throw new Error(
-      `Unable to create an issue in ${owner}/${repo}.`
-    );
-  }
+  throw new Error(message);
+}
 }

@@ -1,4 +1,5 @@
 import { octokit } from "../github/client.js";
+import { getGitHubErrorMessage } from "../errors/githubErrorHandler.js";
 
 export async function listOpenPRs(owner: string, repo: string) {
   try {
@@ -23,10 +24,8 @@ export async function listOpenPRs(owner: string, repo: string) {
 
     return JSON.stringify(formattedPRs, null, 2);
   } catch (error) {
-    console.error("Failed to fetch open pull requests:", error);
+  const message = getGitHubErrorMessage(error);
 
-    throw new Error(
-      `Unable to fetch open pull requests for ${owner}/${repo}.`
-    );
-  }
+  throw new Error(message);
+}
 }
