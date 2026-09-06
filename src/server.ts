@@ -1,6 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/server";
 import { StdioServerTransport } from "@modelcontextprotocol/server/stdio";
 import * as z from "zod/v4";
+import { listOpenPRs } from "./tools/listOpenPRs.js";
 
 const server = new McpServer({
   name: "github-mcp-server",
@@ -8,22 +9,44 @@ const server = new McpServer({
 });
 
 server.registerTool(
-  "greet",
+  "list_open_prs",
   {
-    description: "Greet a person by their name",
-    inputSchema: z.object({
-      name: z.string().describe("The name of the person to greet"),
-    }),
+    description:
+      "List all open pull requests for a specified GitHub repository.",
+    inputSchema: {
+      owner: z
+        .string()
+        .describe("The GitHub username or organization that owns the repository"),
+      repo: z
+        .string()
+        .describe("The name of the GitHub repository"),
+    },
   },
-  async ({ name }) => {
-    return {
-      content: [
-        {
-          type: "text",
-          text: `Hello, ${name}! Welcome to the GitHub MCP Server.`,
-        },
-      ],
-    };
+  async ({ owner, repo }) => {
+    try {
+      const result = await listOpenPRs(owner, repo);
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: result,
+          },
+        ],
+      };
+    } catch (error) {
+      console.error("list_open_prs tool failed:", error);
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Failed to retrieve open pull requests for ${owner}/${repo}.`,
+          },
+        ],
+        isError: true,
+      };
+    }
   }
 );
 
