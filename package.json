@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "tsx src/server.ts"
+    "dev": "tsx src/server.ts",
+    "test:github": "tsx src/github/testConnection.ts"
   },
   "keywords": [],
   "author": "",
