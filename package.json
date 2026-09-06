@@ -4,10 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "tsx src/server.ts",
-    "test:github": "tsx src/github/testConnection.ts",
-    "test:prs": "tsx src/tools/testListPRs.ts"
-  },
+  "dev": "tsx src/server.ts",
+  "test:github": "tsx src/github/testConnection.ts",
+  "test:prs": "tsx src/tools/testListPRs.ts",
+  "test:pr-details": "tsx src/tools/testPRDetails.ts"
+},
   "keywords": [],
   "author": "",
   "license": "ISC",

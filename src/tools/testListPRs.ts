@@ -3,7 +3,7 @@ import { listOpenPRs } from "./listOpenPRs.js";
 async function test() {
   const result = await listOpenPRs(
     "IncharaX",
-    "ts-tutorial"
+    "web"
   );
 
   console.log(result);
