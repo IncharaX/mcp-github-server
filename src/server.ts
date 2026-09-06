@@ -5,6 +5,7 @@ import * as z from "zod/v4";
 import { listOpenPRs } from "./tools/listOpenPRs.js";
 import { getPRDetails } from "./tools/getPRDetails.js";
 import { getCIStatus } from "./tools/getCIStatus.js";
+import { createIssue } from "./tools/createIssue.js";
 
 const server = new McpServer({
   name: "github-mcp-server",
@@ -147,6 +148,61 @@ server.registerTool(
           {
             type: "text",
             text: `Failed to retrieve CI status for branch "${branch}" in ${owner}/${repo}.`,
+          },
+        ],
+        isError: true,
+      };
+    }
+  }
+);
+
+server.registerTool(
+  "create_issue",
+  {
+    description:
+      "Create a new GitHub issue in a specified repository. Use this when the user explicitly wants to create an issue.",
+    inputSchema: {
+      owner: z
+        .string()
+        .describe(
+          "The GitHub username or organization that owns the repository"
+        ),
+
+      repo: z
+        .string()
+        .describe("The name of the GitHub repository"),
+
+      title: z
+        .string()
+        .min(1)
+        .describe("The title of the GitHub issue"),
+
+      body: z
+        .string()
+        .describe("The detailed description or body of the GitHub issue"),
+    },
+  },
+
+  async ({ owner, repo, title, body }) => {
+    try {
+      const result = await createIssue(owner, repo, title, body);
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: result,
+          },
+        ],
+      };
+    } catch (error) {
+      console.error("create_issue tool failed:", error);
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Failed to create an issue in ${owner}/${repo}.`,
           },
         ],
         isError: true,
