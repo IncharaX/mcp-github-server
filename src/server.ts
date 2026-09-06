@@ -6,6 +6,7 @@ import { listOpenPRs } from "./tools/listOpenPRs.js";
 import { getPRDetails } from "./tools/getPRDetails.js";
 import { getCIStatus } from "./tools/getCIStatus.js";
 import { createIssue } from "./tools/createIssue.js";
+import { requireConfirmation } from "./safety/writeConfirmation.js";
 
 const server = new McpServer({
   name: "github-mcp-server",
@@ -160,7 +161,7 @@ server.registerTool(
   "create_issue",
   {
     description:
-      "Create a new GitHub issue in a specified repository. Use this when the user explicitly wants to create an issue.",
+      "Create a GitHub issue. This is a write action and requires explicit confirmation before execution.",
     inputSchema: {
       owner: z
         .string()
@@ -179,12 +180,39 @@ server.registerTool(
 
       body: z
         .string()
-        .describe("The detailed description or body of the GitHub issue"),
+        .describe("The detailed description of the GitHub issue"),
+
+      confirm: z
+        .boolean()
+        .default(false)
+        .describe(
+          "Set to true only after the user has explicitly confirmed the issue should be created"
+        ),
     },
   },
 
-  async ({ owner, repo, title, body }) => {
+  async ({ owner, repo, title, body, confirm }) => {
     try {
+      const actionDescription = `Action: Create GitHub Issue
+Repository: ${owner}/${repo}
+Title: ${title}`;
+
+      const confirmation = requireConfirmation(
+        confirm,
+        actionDescription
+      );
+
+      if (!confirmation.confirmed) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: confirmation.message!,
+            },
+          ],
+        };
+      }
+
       const result = await createIssue(owner, repo, title, body);
 
       return {
