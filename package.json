@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsx src/server.ts",
-    "test:github": "tsx src/github/testConnection.ts"
+    "test:github": "tsx src/github/testConnection.ts",
+    "test:prs": "tsx src/tools/testListPRs.ts"
   },
   "keywords": [],
   "author": "",
