@@ -1,8 +1,10 @@
 import { McpServer } from "@modelcontextprotocol/server";
 import { StdioServerTransport } from "@modelcontextprotocol/server/stdio";
 import * as z from "zod/v4";
+
 import { listOpenPRs } from "./tools/listOpenPRs.js";
 import { getPRDetails } from "./tools/getPRDetails.js";
+import { getCIStatus } from "./tools/getCIStatus.js";
 
 const server = new McpServer({
   name: "github-mcp-server",
@@ -95,6 +97,56 @@ server.registerTool(
           {
             type: "text",
             text: `Failed to retrieve details for PR #${prNumber} in ${owner}/${repo}.`,
+          },
+        ],
+        isError: true,
+      };
+    }
+  }
+);
+
+server.registerTool(
+  "get_ci_status",
+  {
+    description:
+      "Get the latest GitHub Actions CI workflow status for a specific branch in a repository.",
+    inputSchema: {
+      owner: z
+        .string()
+        .describe(
+          "The GitHub username or organization that owns the repository"
+        ),
+
+      repo: z
+        .string()
+        .describe("The name of the GitHub repository"),
+
+      branch: z
+        .string()
+        .describe("The branch to check the latest CI workflow status for"),
+    },
+  },
+
+  async ({ owner, repo, branch }) => {
+    try {
+      const result = await getCIStatus(owner, repo, branch);
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: result,
+          },
+        ],
+      };
+    } catch (error) {
+      console.error("get_ci_status tool failed:", error);
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Failed to retrieve CI status for branch "${branch}" in ${owner}/${repo}.`,
           },
         ],
         isError: true,
