@@ -8,6 +8,7 @@ import { getCIStatus } from "./tools/getCIStatus.js";
 import { createIssue } from "./tools/createIssue.js";
 import { requireConfirmation } from "./safety/writeConfirmation.js";
 import { openPRComment } from "./tools/openPRComment.js";
+import { withLogging } from "./logger/withLogging.js";
 
 const server = new McpServer({
   name: "github-mcp-server",
@@ -29,31 +30,32 @@ server.registerTool(
     },
   },
   async ({ owner, repo }) => {
-    try {
-      const result = await listOpenPRs(owner, repo);
+  try {
+    const result = await withLogging(
+      "list_open_prs",
+      async () => listOpenPRs(owner, repo)
+    );
 
-      return {
-        content: [
-          {
-            type: "text",
-            text: result,
-          },
-        ],
-      };
-    } catch (error) {
-      console.error("list_open_prs tool failed:", error);
-
-      return {
-        content: [
-          {
-            type: "text",
-            text: `Failed to retrieve open pull requests for ${owner}/${repo}.`,
-          },
-        ],
-        isError: true,
-      };
-    }
+    return {
+      content: [
+        {
+          type: "text",
+          text: result,
+        },
+      ],
+    };
+  } catch (error) {
+    return {
+      content: [
+        {
+          type: "text",
+          text: `Failed to retrieve open pull requests for ${owner}/${repo}.`,
+        },
+      ],
+      isError: true,
+    };
   }
+}
 );
 
 server.registerTool(
