@@ -14,6 +14,22 @@ export function logInfo(
   );
 }
 
+export function logDryRun(
+  tool: string,
+  metadata: Record<string, unknown> = {}
+) {
+  console.error(
+    JSON.stringify({
+      level: "INFO",
+      timestamp: new Date().toISOString(),
+      tool,
+      message: "Write action previewed (dry run)",
+      status: "dry_run",
+      ...metadata,
+    })
+  );
+}
+
 export function logError(
   tool: string,
   message: string,
