@@ -2,6 +2,7 @@ import { McpServer } from "@modelcontextprotocol/server";
 import { StdioServerTransport } from "@modelcontextprotocol/server/stdio";
 import * as z from "zod/v4";
 import { listOpenPRs } from "./tools/listOpenPRs.js";
+import { getPRDetails } from "./tools/getPRDetails.js";
 
 const server = new McpServer({
   name: "github-mcp-server",
@@ -42,6 +43,58 @@ server.registerTool(
           {
             type: "text",
             text: `Failed to retrieve open pull requests for ${owner}/${repo}.`,
+          },
+        ],
+        isError: true,
+      };
+    }
+  }
+);
+
+server.registerTool(
+  "get_pr_details",
+  {
+    description:
+      "Get detailed information about a specific GitHub pull request, including branches, description, merge status, and comments.",
+    inputSchema: {
+      owner: z
+        .string()
+        .describe(
+          "The GitHub username or organization that owns the repository"
+        ),
+
+      repo: z
+        .string()
+        .describe("The name of the GitHub repository"),
+
+      prNumber: z
+        .number()
+        .int()
+        .positive()
+        .describe("The pull request number"),
+    },
+  },
+
+  async ({ owner, repo, prNumber }) => {
+    try {
+      const result = await getPRDetails(owner, repo, prNumber);
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: result,
+          },
+        ],
+      };
+    } catch (error) {
+      console.error("get_pr_details tool failed:", error);
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Failed to retrieve details for PR #${prNumber} in ${owner}/${repo}.`,
           },
         ],
         isError: true,
