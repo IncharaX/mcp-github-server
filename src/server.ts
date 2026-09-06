@@ -1,6 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/server";
 import { StdioServerTransport } from "@modelcontextprotocol/server/stdio";
-import { z } from "zod";
+import * as z from "zod/v4";
 
 const server = new McpServer({
   name: "github-mcp-server",
@@ -31,6 +31,8 @@ async function main() {
   const transport = new StdioServerTransport();
 
   await server.connect(transport);
+
+  console.error("GitHub MCP Server is running...");
 }
 
 main().catch((error) => {
