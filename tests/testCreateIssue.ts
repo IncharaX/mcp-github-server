@@ -1,4 +1,4 @@
-import { createIssue } from "./createIssue.js";
+import { createIssue } from "../src/tools/createIssue.js";
 
 async function test() {
   const result = await createIssue(

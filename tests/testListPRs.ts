@@ -1,4 +1,4 @@
-import { listOpenPRs } from "./listOpenPRs.js";
+import { listOpenPRs } from "../src/tools/listOpenPRs.js";
 
 async function test() {
   const result = await listOpenPRs(

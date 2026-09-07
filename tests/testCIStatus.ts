@@ -1,4 +1,4 @@
-import { getCIStatus } from "./getCIStatus.js";
+import { getCIStatus } from "../src/tools/getCIStatus.js";
 
 async function test() {
   const result = await getCIStatus(

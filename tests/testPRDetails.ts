@@ -1,4 +1,4 @@
-import { getPRDetails } from "./getPRDetails.js";
+import { getPRDetails } from "../src/tools/getPRDetails.js";
 
 async function test() {
   const result = await getPRDetails(

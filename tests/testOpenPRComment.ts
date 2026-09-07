@@ -1,4 +1,4 @@
-import { openPRComment } from "./openPRComment.js";
+import { openPRComment } from "../src/tools/openPRComment.js";
 
 async function test() {
   const result = await openPRComment(

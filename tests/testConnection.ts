@@ -1,4 +1,4 @@
-import { octokit } from "./client.js";
+import { octokit } from "../src/github/client.js";
 
 async function testConnection() {
   try {
