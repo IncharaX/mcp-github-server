@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
   "dev": "tsx src/server.ts",
+  "check": "tsc --noEmit",
   "test:github": "tsx tests/testConnection.ts",
   "test:prs": "tsx tests/testListPRs.ts",
   "test:pr-details": "tsx tests/testPRDetails.ts",
