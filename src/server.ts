@@ -46,10 +46,10 @@ server.registerTool(
         ],
       };
     } catch {
-  return handleToolError(
-    `Failed to retrieve open pull requests for ${owner}/${repo}.`
-  );
-}
+      return handleToolError(
+        `Failed to retrieve open pull requests for ${owner}/${repo}.`,
+      );
+    }
   },
 );
 
@@ -86,11 +86,11 @@ server.registerTool(
         ],
       };
     } catch {
-  return handleToolError(
-    `Failed to retrieve details for PR #${prNumber} in ${owner}/${repo}.`
-  );
-}
+      return handleToolError(
+        `Failed to retrieve details for PR #${prNumber} in ${owner}/${repo}.`,
+      );
     }
+  },
 );
 
 server.registerTool(
@@ -128,10 +128,10 @@ server.registerTool(
         ],
       };
     } catch {
-  return handleToolError(
-    `Failed to retrieve CI status for ${owner}/${repo}.`
-  );
-}
+      return handleToolError(
+        `Failed to retrieve CI status for ${owner}/${repo}.`,
+      );
+    }
   },
 );
 
@@ -200,10 +200,8 @@ Title: ${title}`;
         ],
       };
     } catch {
-  return handleToolError(
-    `Failed to create an issue in ${owner}/${repo}.`
-  );
-}
+      return handleToolError(`Failed to create an issue in ${owner}/${repo}.`);
+    }
   },
 );
 
@@ -248,10 +246,10 @@ Comment: ${comment}`;
       const confirmation = requireConfirmation(confirm, actionDescription);
 
       if (!confirmation.confirmed) {
-        logDryRun("create_issue", {
+        logDryRun("open_pr_comment", {
           owner,
           repo,
-          action: "create_issue",
+          action: "open_pr_comment",
         });
 
         return {
@@ -276,10 +274,10 @@ Comment: ${comment}`;
         ],
       };
     } catch {
-  return handleToolError(
-    `Failed to add a comment to PR #${prNumber} in ${owner}/${repo}.`
-  );
-}
+      return handleToolError(
+        `Failed to add a comment to PR #${prNumber} in ${owner}/${repo}.`,
+      );
+    }
   },
 );
 
