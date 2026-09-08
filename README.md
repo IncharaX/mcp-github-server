@@ -151,7 +151,7 @@ mcp-github-server/
 ### 1. Clone the repository
 
 ```bash
-git clone <https://github.com/IncharaX/mcp-github-server>
+git clone https://github.com/IncharaX/mcp-github-server
 cd mcp-github-server
 ```
 
@@ -285,18 +285,19 @@ Write-action previews are also tracked:
 
 ## ❌ Error Handling
 
-The server handles common GitHub API errors and converts them into clearer messages.
+GitHub API errors are translated into clearer messages before being returned through the MCP tool layer.
 
-Examples include:
+Handled cases include:
 
-* Authentication failures
-* Permission issues
-* GitHub rate limits
-* Missing repositories
-* Missing pull requests
+- Authentication failures (`401`)
+- Permission issues or rate limits (`403`)
+- Missing repositories or pull requests (`404`)
+- Unexpected GitHub API errors
 
-Errors are logged internally while MCP clients receive a structured error response.
+Tool failures are returned to MCP clients as structured error responses using:
 
+```text
+isError: true
 ---
 
 ## 🎯 Key Design Decisions
@@ -324,7 +325,6 @@ GitHub errors and MCP tool responses are handled separately to keep responsibili
 * More GitHub tools
 * Persistent logging
 * Rate-limit monitoring
-* Multi-step agent workflows
 * Support for additional AI clients
 
 ---
